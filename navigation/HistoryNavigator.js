@@ -17,6 +17,14 @@ const HistoryNavigator = createStackNavigator(
       headerStyle: {
         backgroundColor: Platform.OS === 'android' ? Colors.primary : '',
       },
+      headerTitleStyle: {
+        fontFamily: 'merchant',
+        fontSize: 35,
+      },
+      headerBackTitleStyle: {
+        fontFamily: 'merchant',
+        fontSize: 24,
+      },
       headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primary,
     },
   }

@@ -33,7 +33,7 @@ const RECEIPTS = [
   ),
   new Receipt(
     '4',
-    'https://kasyfiskalne.pl/wp-content/uploads/2018/06/paragon-fiskalny-nip.jpg',
+    'https://www.fakturaxl.pl/img/paragon-wzor.png',
     'u3',
     'clothes',
     'Zara',
@@ -43,7 +43,7 @@ const RECEIPTS = [
   ),
   new Receipt(
     '5',
-    'https://kasyfiskalne.pl/wp-content/uploads/2018/06/paragon-fiskalny-nip.jpg',
+    'https://i.piccy.info/i9/e51742456cc503ef28c74d69b234c67e/1418393845/288913/798759/paragon_bdr.jpg',
     'u3',
     'clothes',
     'Zara',

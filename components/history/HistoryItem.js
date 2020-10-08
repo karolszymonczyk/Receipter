@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
+import StyledText from '../UI/StyledText';
 import moment from 'moment';
 
 const HistoryItem = (props) => {
@@ -13,7 +14,7 @@ const HistoryItem = (props) => {
     <TouchableComponent onPress={props.onClick} style={styles.item} useForeground>
       <View>
         <View style={styles.price}>
-          <Text>{props.total.toFixed(2)} PLN</Text>
+          <StyledText>{props.total.toFixed(2)} PLN</StyledText>
         </View>
         <Image
           style={styles.image}
@@ -23,7 +24,7 @@ const HistoryItem = (props) => {
           }}
         />
         <View style={styles.date}>
-          <Text>{moment(props.date).format('dddd DD.MM.YY')}</Text>
+          <StyledText>{moment(props.date).format('dddd DD.MM.YY')}</StyledText>
         </View>
       </View>
     </TouchableComponent>

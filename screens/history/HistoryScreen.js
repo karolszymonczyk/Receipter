@@ -1,7 +1,10 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Platform } from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 
+import StyledHeaderButton from '../../components/UI/StyledHeaderButton';
 import HistoryItem from '../../components/history/HistoryItem';
 
 const HistoryScreen = (props) => {
@@ -24,6 +27,14 @@ const HistoryScreen = (props) => {
       numColumns={2}
     />
   );
+};
+
+HistoryScreen.navigationOptions = {
+  headerRight: () => (
+    <HeaderButtons HeaderButtonComponent={StyledHeaderButton}>
+      <Item title='Edit' iconName={Platform.OS === 'android' ? 'md-options' : 'ios-options'} onPress={() => {}} />
+    </HeaderButtons>
+  ),
 };
 
 const styles = StyleSheet.create({
