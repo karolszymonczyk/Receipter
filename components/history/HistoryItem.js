@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
 import StyledText from '../UI/StyledText';
 import moment from 'moment';
 
 const HistoryItem = (props) => {
+  const [logoError, setLogoError] = useState(false);
   let TouchableComponent = TouchableOpacity;
 
-  if (Platform.OS === 'android' && Platform.Version >= 21) {
-    TouchableComponent = TouchableNativeFeedback;
-  }
+  // if (Platform.OS === 'android' && Platform.Version >= 21) { // jeszcze było w
+  //   TouchableComponent = TouchableNativeFeedback;
+  // }
+
+  // usunąć polskie znaki ze wszystkiego
 
   return (
     <TouchableComponent onPress={props.onClick} style={styles.item} useForeground>
@@ -16,15 +19,29 @@ const HistoryItem = (props) => {
         <View style={styles.price}>
           <StyledText>{props.total.toFixed(2)} PLN</StyledText>
         </View>
-        <Image
-          style={styles.image}
-          source={{
-            uri:
-              'https://prowly-uploads.s3.eu-west-1.amazonaws.com/uploads/8222/assets/132267/original-190120148b33da12ed35edc531508409.jpg',
-          }}
-        />
+        <View style={styles.titleContainer}>
+          <StyledText numberOfLines={1}>{props.title}</StyledText>
+        </View>
+        <View>
+          {logoError ? (
+            <View style={styles.textLogoContainer}>
+              <StyledText style={styles.textLogo} numberOfLines={2}>
+                {props.company}
+              </StyledText>
+            </View>
+          ) : (
+            <Image
+              style={styles.logo}
+              source={{
+                uri: `https://logo.clearbit.com/${props.company}.com?size=500`,
+              }}
+              onError={() => setLogoError(true)}
+              on
+            />
+          )}
+        </View>
         <View style={styles.date}>
-          <StyledText>{moment(props.date).format('dddd DD.MM.YY')}</StyledText>
+          <StyledText>{moment(props.date).format('ddd DD.MM.YYYY')}</StyledText>
         </View>
       </View>
     </TouchableComponent>
@@ -32,6 +49,19 @@ const HistoryItem = (props) => {
 };
 
 const styles = StyleSheet.create({
+  textLogoContainer: {
+    height: '70%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textLogo: {
+    fontSize: 50,
+  },
+  titleContainer: {
+    marginLeft: 5,
+    maxWidth: '100%',
+  },
   item: {
     flex: 0.5,
     justifyContent: 'space-around',
@@ -43,12 +73,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white',
     maxWidth: '48%',
-    height: 130, // dynamic dodać
+    height: 180, // dynamic dodać 150 iOS, 180 Andek
     margin: 4,
   },
-  image: {
+  logo: {
     width: '100%',
-    height: '60%',
+    height: '70%',
   },
   price: {
     flexDirection: 'row',
@@ -57,7 +87,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   date: {
-    margin: 5,
+    marginTop: -20,
     flexDirection: 'row',
     justifyContent: 'center',
     overflow: 'hidden',

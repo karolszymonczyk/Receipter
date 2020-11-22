@@ -4,19 +4,18 @@ import { View, Modal, StyleSheet } from 'react-native';
 import StyledText from '../UI/StyledText';
 import StyledButton from '../UI/StyledButton';
 
-const ReceiptsFiltering = ({ isVisible, onClose }) => {
-  //modal
+const FilteringModal = ({ isVisible, onClose }) => {
   return (
-    <View style={styles.centered}>
-      <Modal animationType='slide' transparent={true} visible={isVisible} s>
-        <View style={styles.centered}>
-          <View style={styles.container}>
-            <StyledText style={styles.text}>Hello World!</StyledText>
-            <StyledButton onPress={onClose}>Close</StyledButton>
-          </View>
+    // <View style={styles.centered}>
+    <Modal animationType='slide' transparent={true} visible={isVisible} s>
+      <View style={styles.centered}>
+        <View style={styles.container}>
+          <StyledText style={styles.text}>Hello World!</StyledText>
+          <StyledButton onPress={onClose}>Close</StyledButton>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </Modal>
+    // </View>
   );
 };
 
@@ -48,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReceiptsFiltering;
+export default FilteringModal;

@@ -1,13 +1,15 @@
 class Receipt {
-  constructor(id, photo, userId, category, shop, reclamationDate, date, total) {
+  constructor(id, userId, title, photo, company, date, total, guaranteeDate, category, tags) {
     this.id = id;
-    this.photo = photo;
     this.userId = userId;
-    this.category = category;
-    this.shop = shop;
-    this.reclamationDate = reclamationDate;
+    this.title = title;
+    this.photo = photo;
+    this.company = company;
     this.date = date;
     this.total = total;
+    this.guaranteeDate = guaranteeDate;
+    this.category = category;
+    this.tags = tags;
   }
 }
 

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, Platform, StyleSheet } from 'react-native';
 
 const StyledText = (props) => {
   return (
-    <Text {...props} style={[props.style, styles.text]}>
+    <Text {...props} style={[styles.text, props.style]}>
       {props.children}
     </Text>
   );
@@ -12,7 +12,7 @@ const StyledText = (props) => {
 const styles = StyleSheet.create({
   text: {
     fontFamily: 'merchant',
-    fontSize: 25,
+    fontSize: Platform.OS === 'android' ? 18 : 25,
   },
 });
 

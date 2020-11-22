@@ -4,10 +4,14 @@ import { View, TouchableHighlight, StyleSheet } from 'react-native';
 import StyledText from './StyledText';
 import Colors from '../../constants/Colors';
 
-const styledButton = ({ onPress, color = Colors.primary, style, children }) => {
+const StyledButton = ({ onPress, color = Colors.primary, style, disabled = false, children }) => {
   return (
     <View style={{ ...styles.centered, ...style }}>
-      <TouchableHighlight style={[styles.button, { backgroundColor: color }]} onPress={onPress}>
+      <TouchableHighlight
+        disabled={disabled}
+        style={[styles.button, { backgroundColor: disabled ? Colors.disabled : color }]}
+        onPress={onPress}
+      >
         <StyledText style={styles.text}>{children}</StyledText>
       </TouchableHighlight>
     </View>
@@ -23,8 +27,7 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 20,
     padding: 13,
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingHorizontal: 30,
     elevation: 2,
   },
   text: {
@@ -33,4 +36,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default styledButton;
+export default StyledButton;

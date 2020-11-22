@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, ScrollView, Image, Alert, StyleSheet, Platform } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import { useSelector } from 'react-redux';
-import { capitalize } from 'lodash';
+import { useSelector, useDispatch } from 'react-redux';
+import { capitalize, isEmpty } from 'lodash';
 import moment from 'moment';
 
 import StyledText from '../../components/UI/StyledText';
 import StyledButton from '../../components/UI/StyledButton';
 import StyledHeaderButton from '../../components/UI/StyledHeaderButton';
-import ReceiptEditModal from '../../components/shared/ReceiptEditModal';
 import Colors from '../../constants/Colors';
+import ReceipEditModal from '../../components/shared/ReceiptEditModal';
+import * as ReceiptsActions from '../../store/actions/receipts';
 
 const ReceiptDetailsScreen = ({ navigation }) => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -17,23 +18,67 @@ const ReceiptDetailsScreen = ({ navigation }) => {
   const selectedReceipt = useSelector((state) =>
     state.receipts.userReceipts.find((receipt) => receipt.id === receiptId)
   );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     navigation.setParams({ edit: () => setIsEditMode(true) });
   }, [setIsEditMode]);
 
-  return (
-    <ScrollView>
-      <ReceiptEditModal isVisible={isEditMode} onClose={() => setIsEditMode(!isEditMode)} />
+  const handleDelete = () => {
+    dispatch(
+      ReceiptsActions.deleteReceipt({
+        id: selectedReceipt.id,
+      })
+    );
+    navigation.goBack();
+  };
 
+  const initialValues = {
+    title: selectedReceipt?.title,
+    company: selectedReceipt?.company,
+    date: moment(selectedReceipt?.date).format('dddd DD.MM.YYYY'),
+    time: selectedReceipt?.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    total: selectedReceipt?.total.toFixed(2).toString().replace('.', ','),
+    hasGuarantee: !!selectedReceipt?.guaranteeDate,
+    guaranteeDate: !!selectedReceipt?.guaranteeDate
+      ? moment(selectedReceipt.guaranteeDate).format('dddd DD.MM.YYYY')
+      : moment(new Date()).format('dddd DD.MM.YYYY'),
+  };
+
+  const createTwoButtonAlert = () =>
+    Alert.alert('Are you sure?', 'Receipt data will be lost', [
+      {
+        text: 'Cancel',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      { text: 'Yes', onPress: handleDelete },
+    ]);
+
+  return selectedReceipt ? (
+    <ScrollView>
+      <ReceipEditModal
+        isVisible={isEditMode}
+        onClose={() => setIsEditMode(!isEditMode)}
+        initialValues={initialValues}
+        currentReceipt={selectedReceipt}
+      />
       <View style={styles.data}>
         <View style={styles.row}>
-          <StyledText>Shop:</StyledText>
-          <StyledText>{selectedReceipt.shop}</StyledText>
+          <StyledText>Title:</StyledText>
+          <StyledText>{selectedReceipt.title}</StyledText>
+        </View>
+        <View style={styles.row}>
+          <StyledText>Company:</StyledText>
+          <StyledText>{selectedReceipt.company}</StyledText>
         </View>
         <View style={styles.row}>
           <StyledText>Date:</StyledText>
-          <StyledText>{moment(selectedReceipt.date).format('dddd DD.MM.YY')}</StyledText>
+          <StyledText>{moment(selectedReceipt.date).format('dddd DD.MM.YYYY')}</StyledText>
+        </View>
+        <View style={styles.row}>
+          <StyledText>Time:</StyledText>
+          <StyledText>{selectedReceipt.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</StyledText>
         </View>
         <View style={styles.row}>
           <StyledText>Category:</StyledText>
@@ -43,23 +88,43 @@ const ReceiptDetailsScreen = ({ navigation }) => {
           <StyledText>Total:</StyledText>
           <StyledText>{selectedReceipt.total.toFixed(2)} PLN</StyledText>
         </View>
-        {selectedReceipt.reclamationDate && (
+        {selectedReceipt.guaranteeDate && (
           <View style={styles.row}>
-            <StyledText>Reclamation date:</StyledText>
-            <StyledText>{moment(selectedReceipt.reclamationDate).format('dddd DD.MM.YY')}</StyledText>
+            <StyledText>Guarantee date:</StyledText>
+            <StyledText>{moment(selectedReceipt.guaranteeDate).format('dddd DD.MM.YYYY')}</StyledText>
+          </View>
+        )}
+        {!isEmpty(selectedReceipt.tags) && (
+          <View>
+            <StyledText>Tags:</StyledText>
+            {selectedReceipt.tags.map((tag, idx) => (
+              <View
+                key={idx}
+                style={[
+                  styles.row,
+                  styles.indentation,
+                  { backgroundColor: idx % 2 ? 'transparent' : 'rgba(52, 52, 52, 0.05)' },
+                ]}
+              >
+                <StyledText style={styles.cell}>{capitalize(tag.key)}</StyledText>
+                <StyledText style={styles.cell}>{tag.value.toFixed(2)} PLN</StyledText>
+              </View>
+            ))}
           </View>
         )}
       </View>
       <Image style={styles.image} source={{ uri: selectedReceipt.photo }} />
-      <StyledButton onPress={() => {}} color={Colors.danger}>
+      <StyledButton style={styles.button} onPress={createTwoButtonAlert} color={Colors.danger}>
         Delete
       </StyledButton>
     </ScrollView>
+  ) : (
+    <View></View>
   );
 };
 
 ReceiptDetailsScreen.navigationOptions = (navData) => ({
-  headerTitle: 'Receipt Details',
+  headerTitle: Platform.OS === 'android' ? 'Details' : 'Receipt Details',
   headerRight: () => (
     <HeaderButtons HeaderButtonComponent={StyledHeaderButton}>
       <Item title='Edit' iconName='md-create' onPress={navData.navigation.getParam('edit')} />
@@ -79,6 +144,16 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  cell: {
+    padding: 1,
+    paddingHorizontal: 4,
+  },
+  indentation: {
+    marginLeft: 40,
+  },
+  button: {
+    margin: 50,
   },
 });
 
