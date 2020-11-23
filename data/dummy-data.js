@@ -119,6 +119,20 @@ const categories = [
   'restaurants',
 ];
 
+const tags = [
+  new Tag(1, 'beer'),
+  new Tag(2, 'shoes'),
+  new Tag(3, 'sweets'),
+  new Tag(4, 'water'),
+  new Tag(5, 'nail care'),
+];
+
+const randomTags = () => {
+  const rn = Math.floor(Math.random() * tags.length);
+  const rt = [{ ...tags[rn], value: randomTotal(5, 100) }];
+  return tags[rn + 1] ? rt.concat({ ...tags[rn + 1], value: randomTotal(5, 100) }) : rt;
+};
+
 const fillRandomReceipts = (num) => {
   const receipts = [];
   for (let i = 0; i < num; i++) {
@@ -134,7 +148,7 @@ const fillRandomReceipts = (num) => {
         randomTotal(500, 450),
         null,
         categories[Math.floor(Math.random() * categories.length)],
-        []
+        randomTags() // wylosować kilka
       )
     );
   }

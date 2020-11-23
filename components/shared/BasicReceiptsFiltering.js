@@ -5,7 +5,12 @@ import Colors from '../../constants/Colors';
 import moment from 'moment';
 import Label from './Label';
 
-const BasicReceiptsFiltering = ({ dateRange, setDateRange }) => {
+const BasicReceiptsFiltering = ({ dateRange, setDateRange, setRangePicker }) => {
+  const handeRangeClick = () => {
+    setDateRange('range');
+    setRangePicker(true);
+  };
+
   return (
     <View style={styles.container}>
       <Label selected={dateRange === 'month'} selectedColor={Colors.primary} onPress={() => setDateRange('month')}>
@@ -17,7 +22,7 @@ const BasicReceiptsFiltering = ({ dateRange, setDateRange }) => {
       <Label selected={dateRange === 'all'} selectedColor={Colors.primary} onPress={() => setDateRange('all')}>
         ALL
       </Label>
-      <Label selected={dateRange === 'range'} selectedColor={Colors.primary} onPress={() => setDateRange('range')}>
+      <Label selected={dateRange === 'range'} selectedColor={Colors.primary} onPress={handeRangeClick}>
         RANGE
       </Label>
     </View>

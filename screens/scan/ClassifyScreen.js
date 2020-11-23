@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
-import moment from 'moment';
 
 import CategoryPicker from '../../components/shared/CategoryPicker';
 import TagsPicker from '../../components/shared/TagsPicker';
 import StyledText from '../../components/UI/StyledText';
 import StyledButton from '../../components/UI/StyledButton';
+import ManageTagsModal from '../../components/shared/ManageTagsModal';
+import Colors from '../../constants/Colors';
 import { HOST } from '../../constants/Host';
 import * as ReceiptsActions from '../../store/actions/receipts';
 import LoadingScreen from '../../components/shared/LoadingScreen';
@@ -19,6 +20,8 @@ const ClassifyScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [isTagsManagementMode, setIsTagsManagementMode] = useState(false);
+
   const dispatch = useDispatch();
 
   const fetchCategory = async () => {
@@ -59,9 +62,15 @@ const ClassifyScreen = ({ navigation }) => {
     <LoadingScreen message='Classifying receipt...' />
   ) : (
     <ScrollView style={styles.container}>
+      <ManageTagsModal isVisible={isTagsManagementMode} onClose={() => setIsTagsManagementMode(false)} />
       <StyledText style={styles.label}>Category:</StyledText>
       <CategoryPicker selected={category} onChange={setCategory} />
-      <StyledText style={styles.label}>Tags:</StyledText>
+      <View style={styles.flexContainer}>
+        <StyledText style={styles.label}>Tags:</StyledText>
+        <StyledText style={styles.manageTags} onPress={() => setIsTagsManagementMode(true)}>
+          Manage Tags
+        </StyledText>
+      </View>
       <TagsPicker selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
       <StyledButton style={styles.button} onPress={confirm}>
         Confirm
@@ -77,6 +86,15 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 40,
+  },
+  flexContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  manageTags: {
+    marginRight: 5,
+    color: Colors.primary,
   },
   message: {
     marginTop: 20,

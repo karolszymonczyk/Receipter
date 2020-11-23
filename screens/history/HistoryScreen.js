@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { orderBy, isEmpty } from 'lodash';
 
-import FilteringModal from '../../components/shared/FilteringModal';
+import ReceiptsFilteringModal from '../../components/shared/ReceiptsFilteringModal';
 import StyledHeaderButton from '../../components/UI/StyledHeaderButton';
 import HistoryItem from '../../components/history/HistoryItem';
 import StyledText from '../../components/UI/StyledText';
@@ -43,7 +43,7 @@ const HistoryScreen = (props) => {
 
   return (
     <>
-      <FilteringModal isVisible={isFilteringMode} onClose={() => setIsFilteringMode(!isFilteringMode)} />
+      <ReceiptsFilteringModal isVisible={isFilteringMode} onClose={() => setIsFilteringMode(!isFilteringMode)} />
       <SearchBar query={searchQuery} onChange={handleQueryChange} placeholder='Search by title or company' />
       <FlatList
         ListHeaderComponent={
@@ -79,7 +79,7 @@ HistoryScreen.navigationOptions = (navData) => ({
   headerRight: () => (
     <HeaderButtons HeaderButtonComponent={StyledHeaderButton}>
       <Item
-        title='Edit'
+        title='Filter'
         iconName={Platform.OS === 'android' ? 'md-options' : 'ios-options'}
         onPress={navData.navigation.getParam('edit')}
       />

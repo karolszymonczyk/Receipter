@@ -1,5 +1,5 @@
-import { RECEIPTS } from '../../data/dmmy-data';
-import { ADD_RECEIPT, DELETE_RECEIPT, EDIT_RECEIPT, editReceipt } from '../actions/receipts';
+import { RECEIPTS } from '../../data/dummy-data';
+import { ADD_RECEIPT, DELETE_RECEIPT, EDIT_RECEIPT, REMOVE_TAG } from '../actions/receipts';
 import Receipt from '../../models/receipt';
 
 import { reject } from 'lodash';
@@ -51,6 +51,17 @@ export default (state = initialState, action) => {
       return {
         ...state,
         userReceipts: newUserReceipt,
+      };
+    case REMOVE_TAG:
+      return {
+        ...state,
+        userReceipts: state.userReceipts.map((receipt) => {
+          const modifiedTags = reject(receipt.tags, { id: action.data.tagId });
+          if (modifiedTags.length !== receipt.tags.length) {
+            return { ...receipt, tags: modifiedTags };
+          }
+          return receipt;
+        }),
       };
     default:
       return state;

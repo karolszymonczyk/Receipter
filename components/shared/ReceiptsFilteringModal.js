@@ -4,9 +4,9 @@ import { View, Modal, StyleSheet } from 'react-native';
 import StyledText from '../UI/StyledText';
 import StyledButton from '../UI/StyledButton';
 
-const FilteringModal = ({ isVisible, onClose }) => {
+const ReceiptsFilteringModal = ({ isVisible, onClose }) => {
+  //modal
   return (
-    // <View style={styles.centered}>
     <Modal animationType='slide' transparent={true} visible={isVisible} s>
       <View style={styles.centered}>
         <View style={styles.container}>
@@ -15,7 +15,6 @@ const FilteringModal = ({ isVisible, onClose }) => {
         </View>
       </View>
     </Modal>
-    // </View>
   );
 };
 
@@ -47,4 +46,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FilteringModal;
+export default ReceiptsFilteringModal;

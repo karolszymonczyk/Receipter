@@ -34,7 +34,7 @@ const TagForm = ({ initialValues, onSubmit, tags }) => {
           </Picker>
           <View style={styles.valueContainer}>
             <TextInput
-              placeholder='value'
+              placeholder='Value'
               style={{ ...styles.textInput, borderBottomColor: !values.value ? Colors.danger : Colors.accepted }}
               value={values.value}
               onChangeText={handleChange('value')}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { capitalize, isEmpty, orderBy, reject } from 'lodash';
 import { useSelector } from 'react-redux';
@@ -21,6 +21,14 @@ const TagsPicker = ({ selectedTags, setSelectedTags }) => {
   };
 
   const initialValues = { selectedTag: filterdTags[0] || '', value: '' };
+
+  useEffect(() => {
+    if (allTags) {
+      const existingTagsIds = allTags.map((el) => el.id);
+      const filteredSelectedTags = selectedTags.filter((tag) => existingTagsIds.includes(tag.id));
+      if (selectedTags.length !== filteredSelectedTags.length) setSelectedTags(filteredSelectedTags);
+    }
+  }, [allTags]);
 
   return (
     <>
@@ -75,6 +83,11 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   centerText: {
+    textAlign: 'center',
+  },
+  message: {
+    marginTop: 30,
+    marginHorizontal: 20,
     textAlign: 'center',
   },
 });

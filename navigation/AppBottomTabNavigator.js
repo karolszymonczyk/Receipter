@@ -41,7 +41,7 @@ const StatsNavigator = createStackNavigator(
 
 const ScanNavigator = createStackNavigator(
   {
-    Verify: VerifyScreen,
+    // Verify: VerifyScreen,
     Classify: ClassifyScreen,
   },
   {

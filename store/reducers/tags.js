@@ -1,4 +1,4 @@
-import { TAGS } from '../../data/dmmy-data';
+import { TAGS } from '../../data/dummy-data';
 import { ADD_TAG, DELETE_TAG } from '../actions/tags';
 import Tag from '../../models/tag';
 
@@ -17,6 +17,7 @@ export default (state = initialState, action) => {
         userTags: state.userTags.concat(newTag),
       };
     case DELETE_TAG:
+      console.log(state.userReceipts);
       return {
         ...state,
         userTags: reject(state.userTags, { id: action.data.id }),

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, Modal, StyleSheet } from 'react-native';
+import { View, ScrollView, Modal, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -9,11 +9,13 @@ import ReceiptForm from './ReceiptForm';
 import Colors from '../../constants/Colors';
 import CategoryPicker from './CategoryPicker';
 import TagsPicker from './TagsPicker';
+import ManageTagsModal from './ManageTagsModal';
 import * as ReceiptsActions from '../../store/actions/receipts';
 
-const FilteringModal = ({ isVisible, onClose, initialValues, currentReceipt }) => {
+const ReceiptEditModal = ({ isVisible, onClose, initialValues, currentReceipt }) => {
   const [category, setCategory] = useState(currentReceipt.category);
   const [selectedTags, setSelectedTags] = useState(currentReceipt.tags);
+  const [isTagsManagementMode, setIsTagsManagementMode] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -40,10 +42,16 @@ const FilteringModal = ({ isVisible, onClose, initialValues, currentReceipt }) =
 
   return (
     <Modal animationType='slide' visible={isVisible}>
+      <ManageTagsModal isVisible={isTagsManagementMode} onClose={() => setIsTagsManagementMode(false)} />
       <ScrollView contentContainerStyle={styles.content}>
         <StyledText style={styles.label}>Category:</StyledText>
         <CategoryPicker selected={category} onChange={setCategory} />
-        <StyledText style={styles.label}>Tags:</StyledText>
+        <View style={styles.flexContainer}>
+          <StyledText style={styles.label}>Tags:</StyledText>
+          <StyledText style={styles.manageTags} onPress={() => setIsTagsManagementMode(true)}>
+            Manage Tags
+          </StyledText>
+        </View>
         <TagsPicker selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
         <ReceiptForm initialValues={initialValues} onSubmit={onConfirm} />
         <StyledButton onPress={onClose} color={Colors.danger}>
@@ -59,9 +67,18 @@ const styles = StyleSheet.create({
     paddingVertical: 100,
     padding: 10,
   },
+  flexContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  manageTags: {
+    marginRight: 5,
+    color: Colors.primary,
+  },
   label: {
     fontSize: 40,
   },
 });
 
-export default FilteringModal;
+export default ReceiptEditModal;

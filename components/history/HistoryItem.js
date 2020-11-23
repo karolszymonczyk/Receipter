@@ -7,10 +7,9 @@ const HistoryItem = (props) => {
   const [logoError, setLogoError] = useState(false);
   let TouchableComponent = TouchableOpacity;
 
-  // if (Platform.OS === 'android' && Platform.Version >= 21) { // jeszcze było w
+  // if (Platform.OS === 'android' && Platform.Version >= 21) { // jeszcze było w label
   //   TouchableComponent = TouchableNativeFeedback;
   // }
-
   // usunąć polskie znaki ze wszystkiego
 
   return (
