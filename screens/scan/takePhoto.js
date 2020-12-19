@@ -1,3 +1,4 @@
+import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 
@@ -12,7 +13,7 @@ const verifyCameraPermissions = async () => {
   return true;
 };
 
-const takeImage = async ({ navigation }) => {
+const takePhoto = async ({ navigation }) => {
   const permissions = await verifyCameraPermissions();
   if (!permissions) {
     return;
@@ -28,4 +29,4 @@ const takeImage = async ({ navigation }) => {
   navigation.navigate('Verify', { image });
 };
 
-export default takeImage;
+export default takePhoto;

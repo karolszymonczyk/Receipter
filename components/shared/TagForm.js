@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, Platform } from 'react-native';
 import { capitalize } from 'lodash';
-import { Picker } from '@react-native-picker/picker';
-import { Formik } from 'formik';
+import RNPickerSelect from 'react-native-picker-select';
+import { Formik, isEmptyArray } from 'formik';
 import * as yup from 'yup';
 
 import StyledText from '../UI/StyledText';
@@ -14,7 +14,12 @@ const tagSchema = yup.object({
   value: yup
     .string()
     .required()
-    .test('isValidPrice', 'value must be a valid price', (value) => /^\d+([,.]\d{1,2})?$/.test(value)),
+    .test('isValidPrice', 'value must be a valid price', (value) => /^\d+([,.]\d{1,2})?$/.test(value))
+    .test(
+      'isGreaterThanZero',
+      'value must be greater than 0',
+      (value) => value && parseFloat(value.replace(',', '.')) > 0
+    ),
 });
 
 const TagForm = ({ initialValues, onSubmit, tags }) => {
@@ -22,19 +27,27 @@ const TagForm = ({ initialValues, onSubmit, tags }) => {
     <Formik initialValues={initialValues} validationSchema={tagSchema} onSubmit={onSubmit} enableReinitialize>
       {({ isSubmitting, isValid, dirty, handleChange, handleBlur, errors, setFieldValue, handleSubmit, values }) => (
         <View style={styles.container}>
-          <Picker
-            style={styles.tagsPicker}
-            selectedValue={values.selectedTag.key}
-            onValueChange={(itemValue, itemIndex) => setFieldValue('selectedTag', tags[itemIndex])}
-            // mode='dropdown' // for android (dropdown, dialog)
-          >
-            {tags.map((tag) => (
-              <Picker.Item key={tag.key} label={capitalize(tag.key)} value={tag.key} />
-            ))}
-          </Picker>
+          <View style={styles.pickerContainer}>
+            {!isEmptyArray(tags) ? (
+              <RNPickerSelect
+                style={{ inputIOS: styles.pickerIOS, inputAndroid: styles.pickerAndroid }}
+                useNativeAndroidPickerStyle={false}
+                placeholder={{}}
+                value={values.selectedTag.key}
+                onValueChange={(_, itemIndex) => setFieldValue('selectedTag', tags[itemIndex])}
+                items={tags.map((tag) => ({
+                  key: tag.key,
+                  label: capitalize(tag.key),
+                  value: tag.key,
+                }))}
+              />
+            ) : (
+              <StyledText>No tags left</StyledText>
+            )}
+          </View>
           <View style={styles.valueContainer}>
             <TextInput
-              placeholder='Value'
+              placeholder='value'
               style={{ ...styles.textInput, borderBottomColor: !values.value ? Colors.danger : Colors.accepted }}
               value={values.value}
               onChangeText={handleChange('value')}
@@ -62,9 +75,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  tagsPicker: {
-    width: '45%',
+    marginTop: 20,
+    marginBottom: 10,
   },
   errorMessage: {
     color: Colors.danger,
@@ -76,10 +88,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingHorizontal: 2,
     paddingVertical: 2,
-    fontSize: 24,
+    fontSize: Platform.OS === 'android' ? 16 : 24,
     width: '100%',
   },
-
   valueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -87,7 +98,21 @@ const styles = StyleSheet.create({
     width: '23%',
   },
   PLN: {
-    fontSize: 30,
+    fontSize: Platform.OS === 'android' ? 20 : 30,
+  },
+  pickerContainer: {
+    width: '45%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  pickerIOS: {
+    fontFamily: 'merchant',
+    fontSize: 35,
+  },
+  pickerAndroid: {
+    fontFamily: 'merchant',
+    fontSize: 25,
+    color: 'black',
   },
 });
 

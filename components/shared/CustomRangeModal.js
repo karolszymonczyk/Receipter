@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Modal, TextInput, Keyboard, StyleSheet } from 'react-native';
+import { View, Modal, TextInput, Keyboard, StyleSheet, Platform } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { RadioButton } from 'react-native-paper';
 import moment from 'moment';
@@ -34,7 +34,8 @@ const CustomRangeModal = ({ isVisible, mode, onApply, onClose }) => {
           <View style={styles.flexContainer}>
             <StyledText style={styles.label}>Start date:</StyledText>
             <DateTimePickerModal
-              textColor='black'
+              // textColor='black'
+              style={styles.datePicker}
               isVisible={isStartDatePickerVisible}
               mode='date'
               headerTextIOS='Pick date'
@@ -52,7 +53,8 @@ const CustomRangeModal = ({ isVisible, mode, onApply, onClose }) => {
           <View style={styles.flexContainer}>
             <StyledText style={styles.label}>End date:</StyledText>
             <DateTimePickerModal
-              textColor='black'
+              // textColor='black'
+              style={styles.datePicker}
               isVisible={isEndDatePickerVisible}
               mode='date'
               headerTextIOS='Pick date'
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   label: {
-    fontSize: 30,
+    fontSize: Platform.OS === 'android' ? 20 : 30,
     marginRight: 15,
   },
   textInput: {
@@ -159,6 +161,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 2,
     width: 100,
+    fontSize: Platform.OS === 'android' ? 10 : 20,
   },
   radio: {
     alignItems: 'center',
@@ -167,6 +170,12 @@ const styles = StyleSheet.create({
   },
   unitsContainer: {
     marginTop: 10,
+  },
+  datePicker: {
+    shadowColor: '#000000',
+    shadowRadius: 0,
+    shadowOpacity: 1,
+    shadowOffset: { height: 0, width: 0 },
   },
 });
 

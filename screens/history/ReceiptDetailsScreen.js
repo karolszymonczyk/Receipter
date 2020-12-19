@@ -13,6 +13,7 @@ import ReceipEditModal from '../../components/shared/ReceiptEditModal';
 import * as ReceiptsActions from '../../store/actions/receipts';
 
 const ReceiptDetailsScreen = ({ navigation }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const receiptId = navigation.getParam('receiptId');
   const selectedReceipt = useSelector((state) =>
@@ -24,13 +25,22 @@ const ReceiptDetailsScreen = ({ navigation }) => {
     navigation.setParams({ edit: () => setIsEditMode(true) });
   }, [setIsEditMode]);
 
-  const handleDelete = () => {
-    dispatch(
-      ReceiptsActions.deleteReceipt({
-        id: selectedReceipt.id,
-      })
-    );
-    navigation.goBack();
+  const handleDelete = async () => {
+    setIsLoading(true);
+    let error = null;
+    try {
+      await dispatch(
+        ReceiptsActions.deleteReceipt({
+          id: selectedReceipt.id,
+        })
+      );
+    } catch (err) {
+      error = true;
+      Alert.alert('Something went wrong...', 'Please try again later.', [{ text: 'OK' }]);
+    }
+
+    setIsLoading(false);
+    !error && navigation.goBack();
   };
 
   const initialValues = {
@@ -113,8 +123,8 @@ const ReceiptDetailsScreen = ({ navigation }) => {
           </View>
         )}
       </View>
-      <Image style={styles.image} source={{ uri: selectedReceipt.photo }} />
-      <StyledButton style={styles.button} onPress={createTwoButtonAlert} color={Colors.danger}>
+      <Image style={styles.image} source={{ uri: selectedReceipt.photo }} resizeMode='contain' />
+      <StyledButton style={styles.button} onPress={createTwoButtonAlert} color={Colors.danger} isLoading={isLoading}>
         Delete
       </StyledButton>
     </ScrollView>
@@ -138,7 +148,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 300,
+    height: 500,
   },
   row: {
     marginVertical: 2,

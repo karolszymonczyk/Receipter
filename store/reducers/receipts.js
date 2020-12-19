@@ -1,19 +1,23 @@
 import { RECEIPTS } from '../../data/dummy-data';
-import { ADD_RECEIPT, DELETE_RECEIPT, EDIT_RECEIPT, REMOVE_TAG } from '../actions/receipts';
+import { LOAD_RECEIPTS, ADD_RECEIPT, DELETE_RECEIPT, EDIT_RECEIPT, REMOVE_TAG } from '../actions/receipts';
 import Receipt from '../../models/receipt';
 
 import { reject } from 'lodash';
 
 const initialState = {
-  userReceipts: RECEIPTS,
+  userReceipts: [],
+  // userReceipts: RECEIPTS,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case LOAD_RECEIPTS:
+      return {
+        userReceipts: action.data,
+      };
     case ADD_RECEIPT:
       const newReceipt = new Receipt(
         action.data.id,
-        action.data.userId,
         action.data.title,
         action.data.photo,
         action.data.company,
@@ -27,16 +31,10 @@ export default (state = initialState, action) => {
         ...state, // jak nie będzie nic więcej w state to nie jest potrzebne, a jak będzie filter to uwaga żeby też nowy się pojawił
         userReceipts: state.userReceipts.concat(newReceipt),
       };
-    case DELETE_RECEIPT:
-      return {
-        ...state,
-        userReceipts: reject(state.userReceipts, { id: action.data.id }),
-      };
     case EDIT_RECEIPT:
       const currentReceipt = state.userReceipts.find((receipt) => receipt.id === action.data.id);
       const editedReceipt = new Receipt(
         action.data.id,
-        action.data.userId,
         action.data.title,
         action.data.photo,
         action.data.company,
@@ -51,6 +49,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         userReceipts: newUserReceipt,
+      };
+    case DELETE_RECEIPT:
+      return {
+        ...state,
+        userReceipts: reject(state.userReceipts, { id: action.data.id }),
       };
     case REMOVE_TAG:
       return {

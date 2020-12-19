@@ -35,7 +35,6 @@ const HistoryItem = (props) => {
                 uri: `https://logo.clearbit.com/${props.company}.com?size=500`,
               }}
               onError={() => setLogoError(true)}
-              on
             />
           )}
         </View>
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textLogo: {
-    fontSize: 50,
+    fontSize: Platform.OS === 'android' ? 40 : 50,
   },
   titleContainer: {
     marginLeft: 5,

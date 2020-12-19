@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Modal, StyleSheet } from 'react-native';
+import { View, ScrollView, Modal, StyleSheet, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -13,47 +13,49 @@ import ManageTagsModal from './ManageTagsModal';
 import * as ReceiptsActions from '../../store/actions/receipts';
 
 const ReceiptEditModal = ({ isVisible, onClose, initialValues, currentReceipt }) => {
-  const [category, setCategory] = useState(currentReceipt.category);
-  const [selectedTags, setSelectedTags] = useState(currentReceipt.tags);
-  const [isTagsManagementMode, setIsTagsManagementMode] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
-  const onConfirm = (values) => {
-    dispatch(
-      ReceiptsActions.editReceipt({
-        id: currentReceipt.id,
-        userId: currentReceipt.userId,
-        photo: currentReceipt.photo,
-        tags: selectedTags,
-        category,
-        title: values.title,
-        company: values.company || '-',
-        date: moment(values.date, 'dddd DD.MM.YYYY')
-          .hours(values.time.substring(0, 2))
-          .minutes(values.time.substring(3, 5))
-          .toDate(),
-        total: parseFloat(values.total.replace(',', '.')),
-        guaranteeDate: values.hasGuarantee ? moment(values.guaranteeDate, 'dddd DD.MM.YYYY').toDate() : null,
-      })
-    );
-    onClose();
+  const onConfirm = async (category, selectedTags, values, { resetForm }) => {
+    setIsLoading(true);
+    let error = null;
+    try {
+      await dispatch(
+        ReceiptsActions.editReceipt({
+          id: currentReceipt.id,
+          photo: currentReceipt.photo,
+          title: values.title,
+          company: values.company || '-',
+          date: moment(values.date, 'dddd DD.MM.YYYY')
+            .hours(values.time.substring(0, 2))
+            .minutes(values.time.substring(3, 5))
+            .toDate(),
+          guaranteeDate: values.hasGuarantee ? moment(values.guaranteeDate, 'dddd DD.MM.YYYY').toDate() : null,
+          total: parseFloat(values.total.replace(',', '.')),
+          tags: selectedTags,
+          category,
+        })
+      );
+      resetForm({ values });
+    } catch (err) {
+      error = true;
+      Alert.alert('Something went wrong...', 'Please try again later.', [{ text: 'OK' }]);
+    }
+
+    setIsLoading(false);
+    !error && onClose();
   };
 
   return (
     <Modal animationType='slide' visible={isVisible}>
-      <ManageTagsModal isVisible={isTagsManagementMode} onClose={() => setIsTagsManagementMode(false)} />
       <ScrollView contentContainerStyle={styles.content}>
-        <StyledText style={styles.label}>Category:</StyledText>
-        <CategoryPicker selected={category} onChange={setCategory} />
-        <View style={styles.flexContainer}>
-          <StyledText style={styles.label}>Tags:</StyledText>
-          <StyledText style={styles.manageTags} onPress={() => setIsTagsManagementMode(true)}>
-            Manage Tags
-          </StyledText>
-        </View>
-        <TagsPicker selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
-        <ReceiptForm initialValues={initialValues} onSubmit={onConfirm} />
+        <ReceiptForm
+          initialValues={initialValues}
+          onSubmit={onConfirm}
+          initialCategory={currentReceipt.category}
+          initialTags={currentReceipt.tags}
+          isLoading={isLoading}
+        />
         <StyledButton onPress={onClose} color={Colors.danger}>
           Cancel
         </StyledButton>
@@ -66,18 +68,6 @@ const styles = StyleSheet.create({
   content: {
     paddingVertical: 100,
     padding: 10,
-  },
-  flexContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  manageTags: {
-    marginRight: 5,
-    color: Colors.primary,
-  },
-  label: {
-    fontSize: 40,
   },
 });
 

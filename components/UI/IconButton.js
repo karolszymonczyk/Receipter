@@ -1,10 +1,18 @@
 import React from 'react';
-import { View, TouchableOpacity, TouchableNativeFeedback, Platform, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, TouchableNativeFeedback, ActivityIndicator, Platform, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '../../constants/Colors';
 
-const IconButton = ({ onPress, color = Colors.primary, icon, iconSize = 28, disabled = false, style }) => {
+const IconButton = ({
+  onPress,
+  color = Colors.primary,
+  icon,
+  iconSize = 28,
+  disabled = false,
+  isLoading = false,
+  style,
+}) => {
   let TouchableComponent = TouchableOpacity;
 
   if (Platform.OS === 'android' && Platform.Version >= 21) {
@@ -13,9 +21,13 @@ const IconButton = ({ onPress, color = Colors.primary, icon, iconSize = 28, disa
 
   return (
     <View style={{ ...styles.centered, ...style }}>
-      <TouchableComponent style={styles.roundButton} onPress={onPress} disabled={disabled}>
-        <Ionicons name={icon} size={iconSize} color={disabled ? Colors.disabled : color} />
-      </TouchableComponent>
+      {isLoading ? (
+        <ActivityIndicator style={styles.roundButton} color={color} />
+      ) : (
+        <TouchableComponent style={styles.roundButton} onPress={onPress} disabled={disabled}>
+          <Ionicons name={icon} size={iconSize} color={disabled ? Colors.disabled : color} />
+        </TouchableComponent>
+      )}
     </View>
   );
 };

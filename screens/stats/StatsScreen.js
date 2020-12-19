@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Platform, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
-import { capitalize, isEmpty, minBy } from 'lodash';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, ScrollView, Platform, Alert, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { capitalize, isEmpty, minBy, reject } from 'lodash';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { Pages } from 'react-native-pages';
 import moment from 'moment';
@@ -17,42 +17,25 @@ import PolarChart from '../../components/stats/charts/PolarChart';
 import LineChart from '../../components/stats/charts/LineChart';
 import StyledText from '../../components/UI/StyledText';
 import CustomRangeModal from '../../components/shared/CustomRangeModal';
-
-// const FILTERS = {
-//   month: (receipt) =>
-//     receipt.date.getMonth() >= new Date().getMonth() && receipt.date.getFullYear() === new Date().getFullYear(),
-//   year: (receipt) => receipt.date.getFullYear() === new Date().getFullYear(),
-//   all: (receipt) => receipt,
-//   range: (receipt) => false, // add range option
-// };
-
-// const RANGES = {
-//   month: { start: () => moment().startOf('month').format('DD.MM.YYYY'), end: moment().format('DD.MM.YYYY') },
-//   year: { start: () => moment().startOf('year').format('DD.MM.YYYY'), end: moment().format('DD.MM.YYYY') },
-//   all: {
-//     start: (receipts) =>
-//       receipts
-//         ? moment(minBy(receipts, (receipt) => receipt.date).date).format('DD.MM.YYYY')
-//         : moment().format('DD.MM.YYYY'), // nie jest potrzeben date w środku
-//     end: moment().format('DD.MM.YYYY'),
-//   },
-//   range: { start: () => moment().startOf('month').format('DD.MM.YYYY'), end: moment().format('DD.MM.YYYY') }, // idk
-// };
+import LoadingScreen from '../../components/shared/LoadingScreen';
+import * as ReceiptsActions from '../../store/actions/receipts';
+import * as TagsActions from '../../store/actions/tags';
+import * as AuthActions from '../../store/actions/auth';
 
 // zastąpić wszędzie new Date() -> moment().toDate() albo nawet bez toDate()
 const RANGES = {
-  month: { start: () => moment().startOf('month').startOf('day').toDate(), end: moment().toDate() },
-  year: { start: () => moment().startOf('year').startOf('day').toDate(), end: moment().toDate() },
+  month: { start: () => moment().startOf('month').startOf('day').toDate(), end: moment().endOf('day').toDate() },
+  year: { start: () => moment().startOf('year').startOf('day').toDate(), end: moment().endOf('day').toDate() },
   all: {
     start: (receipts) =>
-      receipts
+      !isEmpty(receipts)
         ? moment(minBy(receipts, (receipt) => receipt.date.getTime()).date)
             .startOf('day')
             .toDate()
-        : moment().toDate(), // nie jest potrzeben date w środku
-    end: moment().toDate(),
+        : moment().toDate(),
+    end: moment().endOf('day').toDate(),
   },
-  range: { start: () => moment().startOf('month').startOf('day').toDate(), end: moment().toDate() },
+  range: { start: () => moment().startOf('month').startOf('day').toDate(), end: moment().endOf('day').toDate() },
 };
 
 const getSummaryConfig = (dateRange, receipts) => {
@@ -73,35 +56,7 @@ const getSummaryConfig = (dateRange, receipts) => {
       return {
         startUnit: 1,
         endUnit: new Date().getDate(),
-        mappedReceipts: receipts.map((receipt) => ({ ...receipt, date: receipt.date.getDay() })),
-      };
-  }
-  return {
-    startUnit: 0,
-    endUnit: 0,
-    mappedReceipts: [],
-  };
-};
-
-const getRangeConfig = (dateRange, receipts) => {
-  switch (dateRange) {
-    case 'years':
-      return {
-        startDate: minBy(receipts, (receipt) => receipt.date).date.getFullYear(),
-        endDate: new Date().getFullYear(),
-        mappedReceipts: receipts.map((receipt) => ({ ...receipt, date: receipt.date.getFullYear() })),
-      };
-    case 'months':
-      return {
-        startUnit: 0,
-        endUnit: new Date().getMonth(),
-        mappedReceipts: receipts.map((receipt) => ({ ...receipt, date: receipt.date.getMonth() })),
-      };
-    case 'days':
-      return {
-        startDate: 1,
-        endDate: new Date().getDate(),
-        mappedReceipts: receipts.map((receipt) => ({ ...receipt, date: receipt.date.getDay() })),
+        mappedReceipts: receipts.map((receipt) => ({ ...receipt, date: receipt.date.getDate() })),
       };
   }
   return {
@@ -174,11 +129,14 @@ const getData = (receipts, total, mode, dateRange, allTags, summaryRange, startD
 // sortowanie po naciśnięciu
 
 const StatsScreen = (props) => {
+  const dispatch = useDispatch();
+
+  const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState('categories');
   const [dateRange, setDateRange] = useState('month');
   const [isPickerVisible, setIsPickerVisible] = useState(dateRange === 'range');
   const allReceipts = useSelector((state) => state.receipts.userReceipts);
-  const [startDate, setStartDate] = useState(RANGES[dateRange].start(allReceipts)); // przy startDate minimalna godzina a przy endDate maxymalna
+  const [startDate, setStartDate] = useState(RANGES[dateRange].start(allReceipts));
   const [endDate, setEndDate] = useState(RANGES[dateRange].end);
 
   const [summaryRange, setSummaryRange] = useState('months');
@@ -194,6 +152,52 @@ const StatsScreen = (props) => {
   const total = receipts.reduce((acc, receipt) => acc + receipt.total, 0);
   const data = getData(receipts, total, mode, dateRange, allTags, summaryRange, startDate, endDate);
   // const total = data.reduce((acc, element) => acc + element.y, 0);
+  const { navigation } = props;
+  const logout = () => {
+    dispatch(AuthActions.logout());
+    navigation.navigate('Auth');
+  };
+
+  const twoButtonLogoutAlert = () =>
+    Alert.alert('Are you sure you want to logout?', '', [
+      {
+        text: 'Cancel',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      { text: 'Yes', onPress: logout },
+    ]);
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      await dispatch(ReceiptsActions.loadReceipts());
+      await dispatch(TagsActions.loadTags());
+    } catch (err) {
+      if (err.message === 'UNAUTH') {
+        navigation.navigate('Auth');
+      }
+      Alert.alert('Something went wrong...', 'Statistics or tags may be out of date. Please try again later.', [
+        { text: 'OK' },
+      ]);
+    }
+    setIsLoading(false);
+  }, [dispatch]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    const listener = props.navigation.addListener('willFocus', loadData);
+    return () => {
+      listener.remove();
+    };
+  }, [loadData]);
+
+  useEffect(() => {
+    navigation.setParams({ twoButtonLogoutAlert: twoButtonLogoutAlert });
+  }, []);
 
   useEffect(() => {
     setStartDate(RANGES[dateRange].start(allReceipts));
@@ -206,7 +210,17 @@ const StatsScreen = (props) => {
         <PieChart data={data} hasData={!isEmpty(receipts)} />
       </View>
       <View style={styles.flexOne}>
-        <PolarChart data={mode === 'tags' ? data.slice(0, -1) : data} />
+        <PolarChart
+          data={
+            mode === 'tags'
+              ? data.length === 1
+                ? []
+                : data.length > 2
+                ? reject(data, (element) => element.x === 'Rest')
+                : data
+              : data
+          }
+        />
       </View>
     </Pages>
   );
@@ -245,24 +259,34 @@ const StatsScreen = (props) => {
       />
       <BasicReceiptsFiltering dateRange={dateRange} setDateRange={setDateRange} setRangePicker={setIsPickerVisible} />
       <ModePicker mode={mode} setMode={setMode} />
-      <StyledText style={styles.rangeLabel}>
-        Date range: {moment(startDate).format('DD.MM.YYYY')} - {moment(endDate).format('DD.MM.YYYY')}
-      </StyledText>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.pagesContainer}>{renderModeCharts()}</View>
-        <StatsTable data={data} total={total} mode={mode} />
-      </ScrollView>
+      {isLoading ? (
+        <LoadingScreen message='Loading statistics...' />
+      ) : (
+        <>
+          <StyledText style={styles.rangeLabel}>
+            Date range: {moment(startDate).format('DD.MM.YYYY')} - {moment(endDate).format('DD.MM.YYYY')}
+          </StyledText>
+          <ScrollView contentContainerStyle={styles.container}>
+            <View style={styles.pagesContainer}>{renderModeCharts()}</View>
+            <StatsTable data={data} total={total} mode={mode} />
+          </ScrollView>
+        </>
+      )}
     </View>
   );
 };
 
-StatsScreen.navigationOptions = {
+StatsScreen.navigationOptions = (navData) => ({
   headerLeft: () => (
     <HeaderButtons HeaderButtonComponent={StyledHeaderButton}>
-      <Item title='Edit' iconName={Platform.OS === 'android' ? 'md-settings' : 'ios-settings'} onPress={() => {}} />
+      <Item
+        title='Logout'
+        iconName={Platform.OS === 'android' ? 'md-log-out' : 'ios-log-out'}
+        onPress={navData.navigation.getParam('twoButtonLogoutAlert')}
+      />
     </HeaderButtons>
   ),
-};
+});
 
 const styles = StyleSheet.create({
   flexOne: {

@@ -15,7 +15,7 @@ const PieChart = ({ data, hasData }) => {
       theme={VictoryTheme.material}
       width={screenWidth}
       padding={100}
-      colorScale='warm' // do tagów bo samo kolory dobierze
+      colorScale='warm'
       data={hasData ? reject(data, (element) => element.y === 0.0) : [{ x: 'No data', y: 100 }]}
       animate={{ duration: 1000 }}
       labels={({ datum }) => (hasData ? `${datum.x} ${Math.round(datum.percent) || '<1'}%` : 'No data')}

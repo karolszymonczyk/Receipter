@@ -7,11 +7,13 @@ import * as Font from 'expo-font';
 
 import receiptsReducuer from './store/reducers/receipts';
 import tagsReducer from './store/reducers/tags';
-import AppBottomTabNavigator from './navigation/AppBottomTabNavigator';
+import authReducer from './store/reducers/auth';
+import AppNavigator from './navigation/AppNavigator';
 
 const rootReducer = combineReducers({
   receipts: receiptsReducuer,
   tags: tagsReducer,
+  auth: authReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
@@ -30,7 +32,7 @@ export default function App() {
   }
   return (
     <Provider store={store}>
-      <AppBottomTabNavigator />
+      <AppNavigator />
     </Provider>
   );
 }

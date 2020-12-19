@@ -158,9 +158,16 @@ const fillRandomReceipts = (num) => {
 export const RECEIPTS = fillRandomReceipts(100);
 
 export const TAGS = [
-  new Tag(1, 'beer'),
+  new Tag(1, 'plants'),
   new Tag(2, 'shoes'),
   new Tag(3, 'sweets'),
-  new Tag(4, 'water'),
-  new Tag(5, 'nail care'),
+  new Tag(4, 'cosmetics'),
+  new Tag(5, 'work'),
 ];
+// export const TAGS = [
+//   new Tag(1, 'beer'),
+//   new Tag(2, 'shoes'),
+//   new Tag(3, 'sweets'),
+//   new Tag(4, 'water'),
+//   new Tag(5, 'nail care'),
+// ];

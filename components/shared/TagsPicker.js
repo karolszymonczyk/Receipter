@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Platform, Alert } from 'react-native';
 import { capitalize, isEmpty, orderBy, reject } from 'lodash';
 import { useSelector } from 'react-redux';
 
@@ -8,15 +8,17 @@ import StyledText from '../UI/StyledText';
 import IconButton from '../UI/IconButton';
 import Colors from '../../constants/Colors';
 
-const TagsPicker = ({ selectedTags, setSelectedTags }) => {
+const TagsPicker = ({ selectedTags, setSelectedTags, receiptValue }) => {
   const allTags = useSelector((state) => orderBy(state.tags.userTags, ['key'])); // memoize
   const filterdTags = reject(allTags, (tag) => selectedTags.map((tag) => tag.id).includes(tag.id));
 
   const addTag = ({ selectedTag, value }, { resetForm }) => {
-    setSelectedTags((prevTags) => [
-      ...prevTags,
-      { id: selectedTag.id, key: selectedTag.key, value: parseFloat(value.replace(',', '.')) },
-    ]);
+    selectedTags.reduce((acc, tag) => acc + tag.value, 0) + parseFloat(value.replace(',', '.')) > receiptValue
+      ? Alert.alert('Warning', 'Sum of tags values is greater than receipt total.', [{ text: 'OK' }])
+      : setSelectedTags((prevTags) => [
+          ...prevTags,
+          { id: selectedTag.id, key: selectedTag.key, value: parseFloat(value.replace(',', '.')) },
+        ]);
     resetForm();
   };
 
@@ -45,7 +47,7 @@ const TagsPicker = ({ selectedTags, setSelectedTags }) => {
                 <StyledText style={[styles.cell, styles.text]}>{tag.value.toFixed(2)} PLN</StyledText>
                 <IconButton
                   style={[styles.cell, styles.end]}
-                  icon='ios-trash'
+                  icon={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
                   iconSize={30}
                   color={Colors.danger}
                   onPress={() => setSelectedTags(reject(selectedTags, (element) => element.id === tag.id))}
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   text: {
-    fontSize: 30,
+    fontSize: Platform.OS === 'android' ? 20 : 30,
   },
   centerText: {
     textAlign: 'center',

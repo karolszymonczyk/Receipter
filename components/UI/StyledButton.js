@@ -1,19 +1,23 @@
 import React from 'react';
-import { View, TouchableHighlight, StyleSheet } from 'react-native';
+import { View, TouchableHighlight, ActivityIndicator, StyleSheet } from 'react-native';
 
 import StyledText from './StyledText';
 import Colors from '../../constants/Colors';
 
-const StyledButton = ({ onPress, color = Colors.primary, style, disabled = false, children }) => {
+const StyledButton = ({ onPress, color = Colors.primary, style, disabled = false, isLoading = false, children }) => {
   return (
     <View style={{ ...styles.centered, ...style }}>
-      <TouchableHighlight
-        disabled={disabled}
-        style={[styles.button, { backgroundColor: disabled ? Colors.disabled : color }]}
-        onPress={onPress}
-      >
-        <StyledText style={styles.text}>{children}</StyledText>
-      </TouchableHighlight>
+      {isLoading ? (
+        <ActivityIndicator style={styles.button} color={color} />
+      ) : (
+        <TouchableHighlight
+          disabled={disabled}
+          style={[styles.button, { backgroundColor: disabled ? Colors.disabled : color }]}
+          onPress={onPress}
+        >
+          <StyledText style={styles.text}>{children}</StyledText>
+        </TouchableHighlight>
+      )}
     </View>
   );
 };
