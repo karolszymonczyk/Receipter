@@ -8,6 +8,11 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 .env
+*__pycache__/
+*.vscode
+*notes
+
+/models/data
 
 # macOS
 .DS_Store
