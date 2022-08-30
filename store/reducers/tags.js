@@ -5,8 +5,7 @@ import Tag from '../../models/tag';
 import { reject } from 'lodash';
 
 const initialState = {
-  userTags: [],
-  // userTags: TAGS,
+  userTags: [],  // use TAGS for dummy data
 };
 
 export default (state = initialState, action) => {

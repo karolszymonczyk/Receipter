@@ -28,7 +28,7 @@ const defaultNavigationOptions = {
     fontSize: 24,
   },
   headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primary,
-  safeAreaInsets: { top: 44 }, // works fine with notch (without it header is flicking) maybe update to 5.x version will help
+  safeAreaInsets: { top: 44 }, // works fine with notch (without it header is flicking)
 };
 
 const StatsNavigator = createStackNavigator(

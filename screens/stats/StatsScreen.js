@@ -22,7 +22,7 @@ import * as ReceiptsActions from '../../store/actions/receipts';
 import * as TagsActions from '../../store/actions/tags';
 import * as AuthActions from '../../store/actions/auth';
 
-// zastąpić wszędzie new Date() -> moment().toDate() albo nawet bez toDate()
+
 const RANGES = {
   month: { start: () => moment().startOf('month').startOf('day').toDate(), end: moment().endOf('day').toDate() },
   year: { start: () => moment().startOf('year').startOf('day').toDate(), end: moment().endOf('day').toDate() },
@@ -66,7 +66,6 @@ const getSummaryConfig = (dateRange, receipts) => {
   };
 };
 
-// extract to hook and improve
 const getData = (receipts, total, mode, dateRange, allTags, summaryRange, startDate, endDate) => {
   switch (mode) {
     case 'categories':
@@ -89,7 +88,7 @@ const getData = (receipts, total, mode, dateRange, allTags, summaryRange, startD
       }, []);
       tagsData.push({ x: 'Rest', y: total - tagsTotal, percent: ((total - tagsTotal) / total) * 100 || 0 });
       return tagsData;
-    case 'summary': // improve
+    case 'summary':
       if (dateRange === 'range') {
         const data = [];
         for (let m = moment(startDate); m.diff(endDate, summaryRange) <= 0; m.add(1, summaryRange)) {
@@ -121,13 +120,6 @@ const getData = (receipts, total, mode, dateRange, allTags, summaryRange, startD
   return [];
 };
 
-// ujednolicić porównywanie dat z momentem łatwiej
-
-// w tagach wykres słupkowy i tak jak zrobię w kategoriach że dla pojedynczego tagu
-
-// sortowanie statsTable zależnie od mode oraz zaznaczenie tyvh linijek żeby było widać
-// sortowanie po naciśnięciu
-
 const StatsScreen = (props) => {
   const dispatch = useDispatch();
 
@@ -146,12 +138,9 @@ const StatsScreen = (props) => {
   const receipts = allReceipts.filter(
     (receipt) => receipt.date.getTime() >= startDate.getTime() && receipt.date.getTime() <= endDate.getTime()
   );
-  // do kategorii i tagów można też dodać te wykresy liniowe jak się zmieniały w czasie wydatki dla kategorii
-  // tylko trzeba tam gdzieś wcisnąć wybór kategorii XD np tam na dole byłby spoko i go jakoś zaznaczyć ale tylko przy tamtym widoku?
 
   const total = receipts.reduce((acc, receipt) => acc + receipt.total, 0);
   const data = getData(receipts, total, mode, dateRange, allTags, summaryRange, startDate, endDate);
-  // const total = data.reduce((acc, element) => acc + element.y, 0);
   const { navigation } = props;
   const logout = () => {
     dispatch(AuthActions.logout());
@@ -298,7 +287,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   pagesContainer: {
-    height: 400, // not hardcoded
+    height: 400,
   },
   pages: {
     marginTop: 15,

@@ -2,7 +2,6 @@ import { Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 
-// show hints on camera screen how to take proper photo (black bacground, all receipts corners visible)
 
 const verifyCameraPermissions = async () => {
   const result = await Permissions.askAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);

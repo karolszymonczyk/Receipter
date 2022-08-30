@@ -84,7 +84,6 @@ const ReceiptForm = ({ initialValues, onSubmit, initialCategory, initialTags = [
             <View style={styles.inputContainer}>
               <StyledText style={styles.label}>Date:</StyledText>
               <DateTimePickerModal
-                // textColor='black'
                 style={styles.datePicker}
                 isVisible={isDatePickerVisible}
                 mode='date'
@@ -164,7 +163,6 @@ const ReceiptForm = ({ initialValues, onSubmit, initialCategory, initialTags = [
               <View style={styles.inputContainer}>
                 <StyledText style={styles.guaranteeLabel}>Date:</StyledText>
                 <DateTimePickerModal
-                  // textColor='black'
                   style={styles.datePicker}
                   isVisible={isGuranteeDatePickerVisible}
                   mode='date'

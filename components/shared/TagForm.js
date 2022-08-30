@@ -64,7 +64,6 @@ const TagForm = ({ initialValues, onSubmit, tags }) => {
             onPress={handleSubmit}
           />
         </View>
-        // {errors.total && touched.total && <StyledText style={styles.errorMessage}>{errors.total}</StyledText>} // add error message
       )}
     </Formik>
   );

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Alert, StyleSheet, View } from 'react-native';
-import { omit } from 'lodash';
+import { ScrollView, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -8,9 +7,6 @@ import { HOST } from '../../constants/Hosts';
 import ReceiptForm from '../../components/shared/ReceiptForm';
 import * as ReceiptsActions from '../../store/actions/receipts';
 import LoadingScreen from '../../components/shared/LoadingScreen';
-import { Ionicons } from '@expo/vector-icons';
-import StyledButton from '../../components/UI/StyledButton';
-import StyledText from '../../components/UI/StyledText';
 
 const VerifyScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,10 +18,8 @@ const VerifyScreen = ({ navigation }) => {
   const fetchImageData = async () => {
     setIsLoading(true);
     const localUri = image.uri;
-    // getting filename of the photo from mobile
     const filename = localUri.split('/').pop();
-    // ?
-    const match = /\.(\w+)$/.exec(filename); // ???
+    const match = /\.(\w+)$/.exec(filename);
     const type = match ? `image/${match[1]}` : `image`;
 
     const formData = new FormData();
@@ -40,7 +34,6 @@ const VerifyScreen = ({ navigation }) => {
       });
       const resData = await res.json();
       setData(resData);
-      // zmienić też te kategorie żeby pasowały do backendu
     } catch (error) {
       Alert.alert('Something went wrong...', 'But you can still add your receipt manually', [{ text: 'OK' }]);
     }
@@ -48,20 +41,10 @@ const VerifyScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // make cleanup
     image && fetchImageData(image);
   }, [image]);
 
-  // useEffect(() => {
-  //   console.log('DATA:', data);
-  // }, [data]);
 
-  // useEffect(() => {
-  //   // naprawić że nie ładuje jak się stąd wyjdzie środkowym
-  //   fetchImageData();
-  // }, []);
-
-  // trimować jeszcze te inputy z tylca
   const confirm = async (category, selectedTags, values, { resetForm }) => {
     setIsLoadingButton(true);
     let error = null;
@@ -116,35 +99,3 @@ const VerifyScreen = ({ navigation }) => {
 };
 
 export default VerifyScreen;
-
-// --------------------------------------------------------------------------
-
-// const fetchCompanies = async () => {
-//   console.log('SIEMANO KLIKANO');
-//   try {
-//     const res = await fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?query=:hm`);
-//     const resData = await res.json();
-//     console.log(resData);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
-
-// const onDropdownShow = () => {
-//   console.log('SHOW');
-// };
-
-// const onDropdownClose = () => {
-//   console.log('CLOSED');
-// };
-
-// const handleSelectItem = (item, index) => {
-//   onDropdownClose();
-//   console.log(item);
-// };
-
-// const renderAuto = () => (
-//   <View>
-//     <StyledText>PODPOWIEDZI TUTAJ</StyledText>
-//   </View>
-// );

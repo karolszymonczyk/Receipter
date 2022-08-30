@@ -15,7 +15,7 @@ export const loadTags = () => async (dispatch, getState) => {
     if (!res.ok) {
       const errMessage = await resData.error;
       if (errMessage === 'Could not parse auth token.') {
-        throw new Error('UNAUTH'); // może da się ten initial state z tego storage dać
+        throw new Error('UNAUTH');
       }
       throw new Error();
     }

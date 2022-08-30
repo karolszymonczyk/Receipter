@@ -29,7 +29,7 @@ const AuthScreen = ({ navigation }) => {
       navigation.navigate('Stats');
     } catch (err) {
       Alert.alert('Something went wrong...', err.message || 'Please try again later.', [{ text: 'OK' }]);
-      setIsLoading(false); // TAM WSZĘDZIE TE BŁĘDY WYWALA JAK PO NAWIGACJI COŚ SIĘ DZIEJE
+      setIsLoading(false);
     }
   };
 

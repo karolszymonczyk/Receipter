@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 35,
-    backgroundColor: 'white', // change for android
+    backgroundColor: 'white',
     paddingHorizontal: 3,
   },
 });

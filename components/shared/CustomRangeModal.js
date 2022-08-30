@@ -53,7 +53,6 @@ const CustomRangeModal = ({ isVisible, mode, onApply, onClose }) => {
           <View style={styles.flexContainer}>
             <StyledText style={styles.label}>End date:</StyledText>
             <DateTimePickerModal
-              // textColor='black'
               style={styles.datePicker}
               isVisible={isEndDatePickerVisible}
               mode='date'

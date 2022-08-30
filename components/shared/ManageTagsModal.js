@@ -51,10 +51,6 @@ const ManageTagsModal = ({ isVisible, onClose }) => {
     setIsLoadingButton(false);
   };
 
-  // add error message when is same as existing
-  // add deleting and editing tags
-
-  // TO DODAĆ
   const handleDelete = async (id) => {
     setIsLoadingTrash(true);
     try {

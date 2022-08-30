@@ -5,7 +5,6 @@ import StyledText from '../UI/StyledText';
 import StyledButton from '../UI/StyledButton';
 
 const ReceiptsFilteringModal = ({ isVisible, onClose }) => {
-  //modal
   return (
     <Modal animationType='slide' transparent={true} visible={isVisible} s>
       <View style={styles.centered}>

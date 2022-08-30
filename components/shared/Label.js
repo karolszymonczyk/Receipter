@@ -3,7 +3,6 @@ import { TouchableOpacity, StyleSheet } from 'react-native';
 import StyledText from '../UI/StyledText';
 
 const Label = ({ selected, selectedColor, onPress, children }) => {
-  // add classnames lib
   return (
     <TouchableOpacity style={[styles.label, { backgroundColor: selected ? selectedColor : 'white' }]} onPress={onPress}>
       <StyledText style={[styles.text, { color: selected ? 'white' : 'black' }]}>{children}</StyledText>

@@ -21,7 +21,7 @@ const HistoryScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [isRefreshing, setIsRefreshing] = useState(false); //?
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -44,7 +44,7 @@ const HistoryScreen = (props) => {
       }
       setError('Somethink went wrong ;/ Please try again later.');
     }
-    setIsLoading(false); // mem leak
+    setIsLoading(false);
   }, [dispatch, setIsLoading, setError]);
 
   useEffect(() => {
@@ -66,7 +66,6 @@ const HistoryScreen = (props) => {
     );
   };
 
-  // ten przycisk do manulanego dodawania i usuwania filtrów
   return error ? (
     <>
       <StyledText style={styles.message}>{error}</StyledText>

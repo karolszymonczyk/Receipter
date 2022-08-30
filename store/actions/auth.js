@@ -1,11 +1,8 @@
 import { AsyncStorage } from 'react-native';
+import { API_KEY } from '../../.env'
 
 export const LOGOUT = 'LOGOUT';
 export const AUTH = 'AUTH';
-
-const API_KEY = 'AIzaSyABO1Gia1uQ3jkPJTMacCzTDhbyKo8Juco';
-
-// let timer;
 
 const saveTokenInStorage = (token, userId, expirationDate) => {
   AsyncStorage.setItem(
@@ -17,12 +14,6 @@ const saveTokenInStorage = (token, userId, expirationDate) => {
     })
   );
 };
-
-// const setLogoutTimer = (time) => (dispatch) => {
-//   tiemr = setTimeout(() => {
-//     dispatch(logout());
-//   }, time);
-// };
 
 export const logout = () => ({ type: LOGOUT });
 

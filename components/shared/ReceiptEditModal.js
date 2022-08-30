@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Modal, StyleSheet, Alert } from 'react-native';
+import { ScrollView, Modal, StyleSheet, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 
-import StyledText from '../UI/StyledText';
 import StyledButton from '../UI/StyledButton';
 import ReceiptForm from './ReceiptForm';
 import Colors from '../../constants/Colors';
-import CategoryPicker from './CategoryPicker';
-import TagsPicker from './TagsPicker';
-import ManageTagsModal from './ManageTagsModal';
 import * as ReceiptsActions from '../../store/actions/receipts';
 
 const ReceiptEditModal = ({ isVisible, onClose, initialValues, currentReceipt }) => {

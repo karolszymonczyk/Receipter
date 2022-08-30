@@ -7,9 +7,6 @@ import StyledText from '../UI/StyledText';
 const StatsTable = ({ data, total, mode }) => {
   const orderedData = ['categories', 'tags'].includes(mode) ? orderBy(data, ['y'], ['desc']) : data;
 
-  // dodać tutaj sortowanie jakie chcę (po roku chronologicznie czy tam alfabetycznie kategorie) albo po cenie
-  // (można też dodać nagłówki żeby byłó wiadomo ocb i tam sortować jak się tyknie)
-
   return (
     <>
       <StyledText style={styles.total}>Total PLN: {total.toFixed(2)}</StyledText>

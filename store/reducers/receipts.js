@@ -5,8 +5,7 @@ import Receipt from '../../models/receipt';
 import { reject } from 'lodash';
 
 const initialState = {
-  userReceipts: [],
-  // userReceipts: RECEIPTS,
+  userReceipts: [],  // use RECEIPTS for dummy data
 };
 
 export default (state = initialState, action) => {

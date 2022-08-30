@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import StyledText from '../UI/StyledText';
 import moment from 'moment';
 
 const HistoryItem = (props) => {
   const [logoError, setLogoError] = useState(false);
   let TouchableComponent = TouchableOpacity;
-
-  // if (Platform.OS === 'android' && Platform.Version >= 21) { // jeszcze było w label
-  //   TouchableComponent = TouchableNativeFeedback;
-  // }
-  // usunąć polskie znaki ze wszystkiego
 
   return (
     <TouchableComponent onPress={props.onClick} style={styles.item} useForeground>
@@ -71,7 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white',
     maxWidth: '48%',
-    height: 180, // dynamic dodać 150 iOS, 180 Andek
+    height: 180,
     margin: 4,
   },
   logo: {
